@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private Button button;
     ValueHandler handler = new ValueHandler();
+    Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +25,32 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BackgroundThread thread = new BackgroundThread();
-                thread.start();
+//                BackgroundThread thread = new BackgroundThread();
+//                thread.start();
+
+                new Thread(new Runnable() {
+                    boolean running = false;
+                    int value = 0;
+
+                    @Override
+                    public void run() {
+                        running = true;
+                        while (running) {
+                            value += 1;
+
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    textView.setText("현재 값 : " + String.valueOf(value));
+                                }
+                            });
+
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {}
+                        }
+                    }
+                }).start();
             }
         });
 
